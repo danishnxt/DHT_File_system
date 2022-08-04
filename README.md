@@ -29,9 +29,18 @@
     - go into dht/ folder and execute "go run dht_nxt_main.go"
     - This will create a basic node object and execute server client code to setup one instance of a chord node 
 
+## Planned
+
+    - Testing module for running tests on all network and non-network functionality 
+    - Auto script to show sample running for overall project
+
 ## Who am I ? 
 
     Just another Gopher trying to Go better
+
+## brviti
+
+    ????
 
 
 
