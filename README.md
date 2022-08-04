@@ -23,6 +23,12 @@
 
     - Should server and client be saved as objects/classes and have state?
 
+## How to run 
+
+    - Create directory called "DHT_NXT" in your GOPATH/src/ folder (or clone this repo with the same name)
+    - go into dht/ folder and execute "go run dht_nxt_main.go"
+    - This will create a basic node object and execute server client code to setup one instance of a chord node 
+
 ## Who am I ? 
 
     Just another Gopher trying to Go better
