@@ -4,5 +4,9 @@ package consts
 const FILE_BUF int = 100000
 
 // DEFAULT SERVER STUFF
-const DEFAULT_PORT string = "3333"
-const DEFAULT_IP string = "localhost"
+
+const (
+	CONN_PORT = "3333"
+	CONN_TYPE = "tcp"
+	CONN_HOST = "localhost"
+)

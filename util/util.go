@@ -2,11 +2,12 @@ package util
 
 import "fmt"
 
-func CheckError(err error) {
-	// check if the file is ok
+func CheckError(err_location string, err error) {
 	if err != nil {
-		fmt.Print(err)
-		panic(err)
+		if err_location != "" {
+			fmt.Println(" ** Error ** ==> ", err_location)
+		}
+		fmt.Println(err)
 	}
 }
 

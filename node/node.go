@@ -1,18 +1,10 @@
 package node
 
-// ============== TESTING STUFF //
-
-// NOTE TO SELF SAMPLE FUNCTION
-// FUNCTION WILL BE EXPORTED DUE TO START WITH CAPITAL LETTER
-// func NodeTest2() int {
-// return node_test() + 1
-// }
-
-// func NodeTestExport() {
-// 	address := nodeAddress{}
-// 	address.setPort("1234")
-// 	println(address.getPort())
-// }
+import (
+	"DHT_NXT/client"
+	"DHT_NXT/consts"
+	"DHT_NXT/server"
+)
 
 type Node struct {
 	node_name        string
@@ -22,12 +14,7 @@ type Node struct {
 	node_config_post nodeAddress
 }
 
-// constructor
-func CreateNode(node_name string) *Node {
-	node_obj := Node{node_name: node_name}
-	node_obj.node_config_self = nodeAddress{}
-	return &node_obj
-}
+// ================ BASIC SETTER GETTERS //
 
 func (nodeObj *Node) GetName() string {
 	return nodeObj.node_name
@@ -43,6 +30,31 @@ func (nodeObj *Node) SetPreIP(new_IP string) {
 
 func (nodeObj *Node) GetPreIP() string {
 	return nodeObj.node_config_pre.getIP()
+}
+
+// ================ CONSTRUCTOR AND INIT //
+
+func CreateNode(node_name string) *Node {
+	node_obj := Node{node_name: node_name}
+	node_obj.node_config_self = nodeAddress{}
+	return &node_obj // do we need this?
+}
+
+func InitNode(port string) {
+
+	if port == "" {
+		port = consts.CONN_PORT
+	}
+
+	// create server
+	exit_chan := make(chan int)
+	go server.FireServer(":"+port, exit_chan)
+
+	// create client
+	client.FireClient()
+
+	<-exit_chan
+
 }
 
 // although probably these function could directly access those of the node_address too?
