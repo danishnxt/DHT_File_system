@@ -23,3 +23,23 @@ func FireClient() {
 	text, _ := reader.ReadString('\n')
 	fmt.Fprintf(c, text+"\n")
 }
+
+// ==== CONNECTING/INTERACTING TO Nodes as client
+
+func DialNode(IP string, port string) net.Conn {
+	CONNECT := IP + port
+	c, err := net.Dial("tcp", CONNECT)
+	util.CheckError("DialNode function", err)
+	return c
+}
+
+func MessageNode(msg_type int, data []byte, dialer_conn net.Conn) {
+	send_buf := util.BuildBuffer(msg_type, data)
+	_, err := dialer_conn.Write(send_buf)
+	util.CheckError("Sending message to Node", err)
+}
+
+func CloseDialer(c net.Conn) {
+	err := c.Close()
+	util.CheckError("Close Dialer", err)
+}

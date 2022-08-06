@@ -7,7 +7,9 @@ import (
 )
 
 type Node struct {
-	node_name        string
+	node_name  string
+	first_node bool
+
 	node_config_self nodeAddress
 	// un-used for the moment
 	node_config_pre  nodeAddress
@@ -34,28 +36,41 @@ func (nodeObj *Node) GetPreIP() string {
 
 // ================ CONSTRUCTOR AND INIT //
 
-func CreateNode(node_name string) *Node {
+func CreateNode(node_name string, node_ip string, node_port string) *Node {
+
+	first_node := false
+
+	if node_port == "" {
+		node_port = consts.CONN_PORT
+		first_node = true
+	}
+
+	if node_ip == "" {
+		node_ip = consts.CONN_HOST
+	}
+
 	node_obj := Node{node_name: node_name}
 	node_obj.node_config_self = nodeAddress{}
+
+	node_obj.node_config_self.setPort(node_port)
+	node_obj.node_config_self.setIP(node_ip)
+	node_obj.first_node = first_node
 	return &node_obj // do we need this?
 }
 
-func InitNode(port string) {
-
-	if port == "" {
-		port = consts.CONN_PORT
-	}
-
+func (nodeObj *Node) InitNodeServer() {
 	// create server
 	exit_chan := make(chan int)
-	go server.FireServer(":"+port, exit_chan)
-
-	// create client
-	client.FireClient()
-
-	<-exit_chan
-
+	go server.FireServer(nodeObj.node_config_self.getIP(), ":"+nodeObj.node_config_self.getPort(), exit_chan)
+	<-exit_chan // no this would never return tho
 }
 
-// although probably these function could directly access those of the node_address too?
-// since they are the same package it should not require to be exported?
+func (nodeObj *Node) InitNodeClient() {
+	// blocking call?
+	client.FireClient()
+}
+
+func (nodeObj *Node) MaintainRing() {
+
+	// infinite while loop -
+}

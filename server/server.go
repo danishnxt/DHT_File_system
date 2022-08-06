@@ -42,16 +42,16 @@ func handleConnection(c net.Conn) bool {
 	}
 }
 
-func FireServer(port string, exit_chan chan int) {
+func FireServer(ip string, port string, exit_chan chan int) {
 
 	var mu sync.Mutex
 	var global_exit bool = false
 
-	l, err := net.Listen(consts.CONN_TYPE, consts.CONN_HOST+port)
+	l, err := net.Listen(consts.CONN_TYPE, ip+port)
 	util.CheckError("INIT LISTEN ", err)
 	defer l.Close()
 
-	fmt.Println("SERVER ENGAGE " + consts.CONN_HOST + port)
+	fmt.Println("SERVER ENGAGE " + ip + port)
 	for {
 		conn, err := l.Accept()
 		util.CheckError("Accepting client", err)
