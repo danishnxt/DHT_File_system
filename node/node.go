@@ -62,7 +62,7 @@ func (nodeObj *Node) InitNodeServer() {
 	// create server
 	exit_chan := make(chan int)
 	go server.FireServer(nodeObj.node_config_self.getIP(), ":"+nodeObj.node_config_self.getPort(), exit_chan)
-	<-exit_chan // no this would never return tho
+	<-exit_chan // will block the goroutine as it should?
 }
 
 func (nodeObj *Node) InitNodeClient() {

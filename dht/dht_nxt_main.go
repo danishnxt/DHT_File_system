@@ -19,7 +19,7 @@ func main() {
 	}
 
 	myNode := node.CreateNode("test_node_1", ip_in, port_in)
-	myNode.InitNodeServer()
+	go myNode.InitNodeServer()
 	myNode.MaintainRing()
 	myNode.InitNodeClient() // blocking call
 }
