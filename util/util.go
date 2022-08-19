@@ -21,10 +21,16 @@ func UtilMin(a, b int) int {
 	return b
 }
 
+// create new buffer to append data into
 func BuildBuffer(msg_type int, buf []byte) []byte {
 	new_buf := make([]byte, consts.FILE_BUF+1) // add space for 1
 	// TODO: Find a more elegant solution to this?
 	copy(new_buf, string(msg_type))
 	copy(new_buf[1:], buf) // built buffer
 	return new_buf
+}
+
+// void function just to append msg to buffer
+func AppendMsgBuffer(msg_type int, buf []byte) {
+	copy(buf[0:], string(msg_type))
 }

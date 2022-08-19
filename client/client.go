@@ -27,7 +27,7 @@ func FireClient() {
 // ==== CONNECTING/INTERACTING TO Nodes as client
 
 func DialNode(IP string, port string) net.Conn {
-	CONNECT := IP + port
+	CONNECT := IP + ":" + port
 	c, err := net.Dial("tcp", CONNECT)
 	util.CheckError("DialNode function", err)
 	return c
@@ -35,6 +35,7 @@ func DialNode(IP string, port string) net.Conn {
 
 func MessageNode(msg_type int, data []byte, dialer_conn net.Conn) {
 	send_buf := util.BuildBuffer(msg_type, data)
+	fmt.Print(send_buf)
 	_, err := dialer_conn.Write(send_buf)
 	util.CheckError("Sending message to Node", err)
 }

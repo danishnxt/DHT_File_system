@@ -6,46 +6,49 @@ import (
 	"bufio"
 	"fmt"
 	"net"
-	"strconv"
-	"sync"
 )
 
 func handleConnection(c net.Conn) bool {
 	fmt.Println("Handle connection fired")
+	conn_reader := bufio.NewReader(c)
 	for {
 		// create reader object on connection
 		// two stage read
-		conn_reader := bufio.NewReader(c)
-		net_data, err := conn_reader.ReadString('@') // delim
-		util.CheckError("READ TYPE", err)
-		if err.Error() == "EOF" {
-			fmt.Println("conection broken - catch and resume") // graceful exit on error
-			return false
+		net_data, err := conn_reader.ReadByte()
+		print(net_data)
+		util.CheckError(" HandleConnection - READ TYPE", err)
+
+		if err != nil {
+			if err.Error() == "EOF" {
+				fmt.Println("conection broken - catch and resume") // graceful exit on error
+				return false
+			}
 		}
-		net_data = net_data[:1] // remove delim
-		socket_type, _ := strconv.Atoi(net_data)
+
+		fmt.Println("waiting on msg -> ", net_data)
+		socket_type := net_data
+		// socket_type, _ := strconv.Atoi(string(net_data))
 		fmt.Println("SocketType: ", socket_type)
 		if socket_type == 1 {
-			fmt.Println("Got ping - close server") // connection closed
+			fmt.Println("Got ping - initial hit") // connection closed
 			return true
 		}
 		if socket_type == 2 {
-			fmt.Println("Got ping - disconnnect client") // connection closed
-			return false
+			fmt.Println("Got ping - live check") // connection closed
+			return true
 		}
-		data_buf := make([]byte, 10000)
-		remain_data_read, err2 := conn_reader.Read(data_buf) // read remainder
-		util.CheckError("READ PAYLOAD", err2)
-		// trim buffer
-		data_buf = data_buf[:remain_data_read] // read up to that point
-		fmt.Println(data_buf)
+
+		// IGNORE THE PAYLOAD FOR NOW //
+		// data_buf := make([]byte, 10000)
+		// remain_data_read, err2 := conn_reader.Read(data_buf) // read remainder
+		// util.CheckError("READ PAYLOAD", err2)
+		// // trim buffer
+		// data_buf = data_buf[:remain_data_read] // read up to that point
+		// fmt.Println(data_buf)
 	}
 }
 
-func FireServer(ip string, port string, exit_chan chan int) {
-
-	var mu sync.Mutex
-	var global_exit bool = false
+func FireServer(ip string, port string) {
 
 	l, err := net.Listen(consts.CONN_TYPE, ip+port)
 	util.CheckError("INIT LISTEN ", err)
@@ -53,22 +56,17 @@ func FireServer(ip string, port string, exit_chan chan int) {
 
 	fmt.Println("SERVER ENGAGE " + ip + port)
 	for {
+		fmt.Println("GOT A CLIENT - BLOCK")
 		conn, err := l.Accept()
+		fmt.Println("GOT A CLIENT - UNBLOCK")
 		util.CheckError("Accepting client", err)
+
+		// This code chunk gets fired off ->
 		go func() {
-			// what is the scope of this exit variable?
-			exit := handleConnection(conn) // I don't think this should work?
-			if !exit {
-				mu.Lock()
-				global_exit = true
-				mu.Unlock()
-			}
+			// what is scope of this exit variable? Does it matter?
+			exit := handleConnection(conn)
+			print("Got from handle connectin => ", exit)
+
 		}()
-		mu.Lock()
-		if global_exit {
-			mu.Unlock()
-			break
-		}
 	}
-	exit_chan <- 1
 }

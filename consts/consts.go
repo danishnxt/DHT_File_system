@@ -1,7 +1,9 @@
 package consts
 
 // FILE IO CONSTS
-const FILE_BUF int = 100000
+// const FILE_BUF int = 100000
+const FILE_BUF int = 10
+const MSG_DIST int = 2 // +
 
 // DEFAULT SERVER STUFF
 
